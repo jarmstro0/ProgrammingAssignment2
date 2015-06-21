@@ -14,10 +14,13 @@ makeCacheMatrix <- function(x = matrix()) {
       inv <- matrix()
       inv <- NULL
       
-      ## cache new matrix and clear inverse matrix
+      ## compare argument to existing matrix and, if different,
+      ## cache argument matrix and clear inverse matrix
       cache <- function(y) {
-            x <<- y
-            inv <<- NULL
+            if (x != y) {
+                  x <<- y
+                  inv <<- NULL    
+            }   
       }
       
       ## get matrix
@@ -41,18 +44,16 @@ makeCacheMatrix <- function(x = matrix()) {
 ## calculated is also cached.
 
 cacheSolve <- function(x, ...) {
-      ## if new matrix equals cached matrix, return cached inverse
-      y <- x$get()
-      if (x == y) {
-            message("getting cached data")
-            return(x$getinv())
+      ## if cached inverse is empty, return cached inverse
+      y <- x$getinv()
+      if(!is.null(y)) {
+            return(y)
       }
       
-      ## if inverse is not cached, calculate new inverse and cache
-      ## both original matrix and its inverse
-      x$cache(x)
-      z <- solve(x)
-      x$cacheinv(z)
-      z
+      ## if cached inverse is not empty, calculate new inverse and cache
+      z <- x$get()
+      aa <- solve(z)
+      x$cacheinv(aa)
+      aa
 }
 ## -------------------------------------------------------------------
